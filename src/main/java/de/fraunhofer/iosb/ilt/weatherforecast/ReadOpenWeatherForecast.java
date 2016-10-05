@@ -17,6 +17,9 @@ import de.fraunhofer.iosb.ilt.sta.model.Thing;
 import de.fraunhofer.iosb.ilt.sta.model.ext.EntityList;
 import de.fraunhofer.iosb.ilt.sta.model.ext.UnitOfMeasurement;
 import de.fraunhofer.iosb.ilt.sta.service.SensorThingsService;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URI;
@@ -27,6 +30,7 @@ import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Calendar;
 import java.util.Iterator;
+import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.apache.http.HttpEntity;
@@ -39,7 +43,6 @@ import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.util.EntityUtils;
 import org.geojson.Point;
-import org.threeten.extra.Interval;
 
 /**
  *
@@ -47,40 +50,63 @@ import org.threeten.extra.Interval;
  */
 public class ReadOpenWeatherForecast {
 
+    private static Properties props;
     private static final String OPEN_WEATHER_API_KARLSRUHE_CITY_ID = "3214104";
     private static final String OPEN_WEATHER_API_PARIS_CITY_ID = "3214104";
     private static final String OPEN_WEATHER_API_HZG_APPID = "1e12aa36e7c7c42296496089072ef68a";
     private static final String OPEN_WEATHER_API_URL = "http://api.openweathermap.org/data/2.5/";
 
     private static final String BASE_URL = "http://akme-a3.iosb.fraunhofer.de:80/SensorThingsService/v1.0/";
+    // to be moved to properties file
+    private long SENSOR_ID = 332;
+    private long THING_ID = 1;
+    private long PROPERTY_ID = 1;
+    private long LOCATION_ID = 1;
+    private long DATASTREAM_ID = 358;
 
     private static SensorThingsService service;
 
     /**
      *
-     * @return
-     * @throws ServiceFailureException
+     * @return @throws ServiceFailureException
      * @throws URISyntaxException
      */
     public Datastream createOpenWeatherSensor() throws ServiceFailureException, URISyntaxException {
-        Sensor ows = new Sensor("OpenWeatherData", "OpenWeatherData Server free service", "text", "Some metadata.");
-        service.create(ows);
+        Sensor ows = service.sensors().find(Long.parseLong(props.getProperty("SENSOR_ID")));
+        if (ows == null) {
+            ows = new Sensor("OpenWeatherData", "OpenWeatherData Server free service", "text", "Some metadata.");
+            service.create(ows);
+        }
 
-        ObservedProperty obsProp1 = new ObservedProperty("Temperature", new URI("http://ucom.org/temperature"), "forecast temperature");
-        service.create(obsProp1);
+        //Sensor ows = new Sensor("OpenWeatherData", "OpenWeatherData Server free service", "text", "Some metadata.");
+        ObservedProperty obsProp1 = service.observedProperties().find(Long.parseLong(props.getProperty("TEMPERATURE_ID")));
+        if (obsProp1 == null) {
+            obsProp1 = new ObservedProperty("Temperature", new URI("http://ucom.org/temperature"), "forecast temperature");
+            service.create(obsProp1);
+        }
 
-        Thing iosb = new Thing("IOSB-KA", "IOSB Building, Fraunhoferstr. 1, 76131 Karlsruhe");
-        service.create(iosb);
+        Thing iosb = service.things().find(Long.parseLong(props.getProperty("THING_IOSB_KA_ID")));
+        if (iosb == null) {
+            iosb = new Thing("IOSB-KA", "IOSB Building, Fraunhoferstr. 1, 76131 Karlsruhe");
+            service.create(iosb);
+        }
 
-        Location location = new Location("Location IOSB-KA", "Location of IOSB Building in Karlsruhe", "application/vnd.geo+json", new Point(8, 52));
-        location.getThings().add(iosb);
-        service.create(location);
+        Location location = service.locations().find(Long.parseLong(props.getProperty("IOSB_LOCATION_ID")));
+        if (location == null) {
+            location = new Location("Location IOSB-KA", "Location of IOSB Building in Karlsruhe", "application/vnd.geo+json", new Point(8, 52));
+            location.getThings().add(iosb);
+            service.create(location);
+        }
 
-        Datastream datastream = new Datastream("forecast", "Temperature forecast", OPEN_WEATHER_API_KARLSRUHE_CITY_ID, new UnitOfMeasurement("degree kelvin", "°K", "ucum:T"));
-        datastream.setThing(iosb);
-        datastream.setSensor(ows);
-        datastream.setObservedProperty(obsProp1);
-        service.create(datastream);
+        Datastream datastream = service.datastreams().find(Long.parseLong(props.getProperty("DATASTREAM_ID")));
+        if (datastream == null) {
+            datastream = new Datastream("forecast", "Temperature forecast", OPEN_WEATHER_API_KARLSRUHE_CITY_ID, new UnitOfMeasurement("degree kelvin", "°K", "ucum:T"));
+            datastream.setThing(iosb);
+            datastream.setSensor(ows);
+            datastream.setObservedProperty(obsProp1);
+            service.create(datastream);
+        }
+
         return datastream;
     }
 
@@ -93,19 +119,12 @@ public class ReadOpenWeatherForecast {
      */
     public Datastream getDataStream(String cityCode) throws ServiceFailureException, URISyntaxException {
 
-        EntityList<Datastream> dataStreamList = service.datastreams().query().filter("observationType eq '" + OPEN_WEATHER_API_KARLSRUHE_CITY_ID + "'").list();
         Datastream ds = null;
-        int size = dataStreamList.size();
-        if (size == 0) {
-            // no datastream found, initialize sensor
+        ds = service.datastreams().find(Long.parseLong(props.getProperty("DATASTREAM_ID")));
+        if (ds == null) {
             ds = createOpenWeatherSensor();
             return ds;
         }
-        if (size > 1) {
-            System.out.println("found more than 1 datastream for " + cityCode + ", database needs cleanup");
-        }
-        Iterator i = dataStreamList.iterator();
-        ds = (Datastream) i.next();
         return ds;
     }
 
@@ -118,7 +137,7 @@ public class ReadOpenWeatherForecast {
 
     /**
      * Read the Forecast data from now and return the result
-     * 
+     *
      * @return
      * @throws IOException
      */
@@ -225,12 +244,37 @@ public class ReadOpenWeatherForecast {
      * @throws IOException
      */
     public static void main(String[] args) throws ServiceFailureException, URISyntaxException, MalformedURLException, IOException {
+
+        props = new Properties();
+        try {
+            props.load(new FileInputStream("config.properties"));
+
+        } catch (FileNotFoundException e) {
+            System.out.println(e);
+            System.out.println("properties file has been created with default values. Please check your correct settings");
+            props.setProperty("KARLSRUHE_CITY_ID", "3214104");
+            props.setProperty("PARIS_CITY_ID", "3214104");
+            props.setProperty("OPEN_WEATHER_API_APPID", "1e12aa36e7c7c42296496089072ef68a");
+            props.setProperty("OPEN_WEATHER_API_URL", "http://api.openweathermap.org/data/2.5/");
+
+            props.setProperty("BASE_URL", "http://akme-a3.iosb.fraunhofer.de:80/SensorThingsService/v1.0/");
+            props.setProperty("SENSOR_ID", "296");
+            props.setProperty("THING_IOSB_KA_ID", "358");
+            props.setProperty("TEMPERATURE_ID", "331");
+            props.setProperty("IOSB_LOCATION_ID", "296");
+            props.setProperty("DATASTREAM_ID", "359");
+
+            props.store(
+                    new FileOutputStream("config.properties"), "EBITA OpenWeatherData Scanner");
+            return;
+        }
+
         URL baseUri = new URL(BASE_URL);
         service = new SensorThingsService(baseUri);
 
         // create OpenWeatherData Sensor for Karlsruhe
         ReadOpenWeatherForecast reader = new ReadOpenWeatherForecast();
-        
+
         // get DataStream for CityId = Karlsruhe 
         Datastream ds = reader.getDataStream(OPEN_WEATHER_API_KARLSRUHE_CITY_ID);
 
@@ -242,6 +286,7 @@ public class ReadOpenWeatherForecast {
 
         // convert and store forecast data
         reader.storeForecastData(ds, forecast);
+
     }
 
 }
