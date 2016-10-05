@@ -21,13 +21,12 @@ import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.text.SimpleDateFormat;
+import java.net.URL;
 import java.time.ZoneOffset;
+import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.List;
-import java.util.Map;
+import java.util.Iterator;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.apache.http.HttpEntity;
@@ -39,6 +38,8 @@ import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.util.EntityUtils;
+import org.geojson.Point;
+import org.threeten.extra.Interval;
 
 /**
  *
@@ -55,58 +56,55 @@ public class ReadOpenWeatherForecast {
 
     private static SensorThingsService service;
 
-    private final List<Thing> things = new ArrayList<>();
-    private final List<Location> locations = new ArrayList<>();
-    private final List<Sensor> sensors = new ArrayList<>();
-    private final List<ObservedProperty> oProps = new ArrayList<>();
-    private final List<Datastream> datastreams = new ArrayList<>();
-    private final List<Observation> observations = new ArrayList<>();
-
-    public void createOpenWeatherSensor() throws ServiceFailureException, URISyntaxException {
+    public Datastream createOpenWeatherSensor() throws ServiceFailureException, URISyntaxException {
         Sensor ows = new Sensor("OpenWeatherData", "OpenWeatherData Server free service", "text", "Some metadata.");
         service.create(ows);
-        sensors.add(ows);
 
         ObservedProperty obsProp1 = new ObservedProperty("Temperature", new URI("http://ucom.org/temperature"), "forecast temperature");
         service.create(obsProp1);
-        oProps.add(obsProp1);
 
         Thing iosb = new Thing("IOSB-KA", "IOSB Building, Fraunhoferstr. 1, 76131 Karlsruhe");
         service.create(iosb);
-        things.add(iosb);
 
-        Datastream datastream1 = new Datastream("forecast", "Temperature forecast", OPEN_WEATHER_API_KARLSRUHE_CITY_ID, new UnitOfMeasurement("degree kelvin", "°K", "ucum:T"));
-        datastream1.setThing(iosb);
-        datastream1.setSensor(ows);
-        datastream1.setObservedProperty(obsProp1);
-        service.create(datastream1);
-        datastreams.add(datastream1);
+        Location location = new Location("Location IOSB-KA", "Location of IOSB Building in Karlsruhe", "application/vnd.geo+json", new Point(8, 52));
+        location.getThings().add(iosb);
+        service.create(location);
 
+        Datastream datastream = new Datastream("forecast", "Temperature forecast", OPEN_WEATHER_API_KARLSRUHE_CITY_ID, new UnitOfMeasurement("degree kelvin", "°K", "ucum:T"));
+        datastream.setThing(iosb);
+        datastream.setSensor(ows);
+        datastream.setObservedProperty(obsProp1);
+        service.create(datastream);
+        return datastream;
     }
-    
-    
-    public Observation getObservation (String cityCode) {
-    
-        Observation o = null;
-        try {
-            EntityList<Datastream> dataStreamList = service.datastreams().query().filter("observationType eq '" + OPEN_WEATHER_API_KARLSRUHE_CITY_ID + "'").list();
-            String t = "";
-        } catch (ServiceFailureException ex) {
-            Logger.getLogger(ReadOpenWeatherForecast.class.getName()).log(Level.SEVERE, null, ex);
-        }
 
-        return o;
+    public Datastream getDataStream(String cityCode) throws ServiceFailureException, URISyntaxException {
+
+        EntityList<Datastream> dataStreamList = service.datastreams().query().filter("observationType eq '" + OPEN_WEATHER_API_KARLSRUHE_CITY_ID + "'").list();
+        Datastream ds = null;
+        int size = dataStreamList.size();
+        if (size == 0) {
+            // no datastream found, initialize sensor
+            ds = createOpenWeatherSensor();
+            return ds;
+        }
+        if (size > 1) {
+            System.out.println("found more than 1 datastream for " + cityCode + ", database needs cleanup");
+        }
+        Iterator i = dataStreamList.iterator();
+        ds = (Datastream) i.next();
+        return ds;
     }
 
     public void deleteOpenWeatherSensor() {
 
     }
-    
+
     public void deleteForecastData() {
-        
+
     }
 
-    public void readForecastData() throws IOException {
+    public JsonNode readForecastData() throws IOException {
         // read data from OpenWeatherData server
         CloseableHttpClient httpclient = HttpClients.createDefault();
         String result = "";
@@ -135,39 +133,77 @@ public class ReadOpenWeatherForecast {
                 throw new ClientProtocolException("Unexpected response status: " + status);
             }
 
-            Calendar zeit = Calendar.getInstance();
-            DateTimeFormatter f = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSSX")
-                    .withZone(ZoneOffset.UTC);
             ObjectMapper mapper = new ObjectMapper();
-            //Map<String, Object> forecastData = mapper.readValue(result, Map.class);
-            JsonNode forecastData = mapper.readValue(result, JsonNode.class);
-            JsonNode values = forecastData.path("list");
-            for (int i = 0; i < values.size(); i++) {
-                JsonNode time = values.path(i).path("dt");
-                JsonNode temp = values.path(i).path("main").path("temp");
-                zeit.setTimeInMillis(time.asLong());
-
-                System.out.println(f.format(zeit.toInstant()) + ": " + temp.toString());
-            }
-
+            JsonNode forecastData = mapper.readValue(result, JsonNode.class
+            );
+            return forecastData.path("list");
         } finally {
             httpclient.close();
         }
-        // get the datastream
+    }
 
-        // add forecast data
+    public void storeForecastData(Datastream ds, JsonNode forecast) {
+        Calendar zeit = Calendar.getInstance();
+        DateTimeFormatter f = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSSX")
+                .withZone(ZoneOffset.UTC);
+        for (int i = 0; i < forecast.size(); i++) {
+            JsonNode time = forecast.path(i).path("dt");
+            JsonNode temp = forecast.path(i).path("main").path("temp");
+            zeit.setTimeInMillis(time.asLong() * 1000);
+            System.out.println(f.format(zeit.toInstant()) + ": " + temp.toString());
+
+            Observation o = new Observation(temp.toString(), ds);
+            o.setPhenomenonTime(ZonedDateTime.parse(f.format(zeit.toInstant())));
+            try {
+                service.create(o);
+
+            } catch (ServiceFailureException ex) {
+                Logger.getLogger(ReadOpenWeatherForecast.class
+                        .getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+
+    }
+
+    private void cleanForcastData(Datastream ds) throws ServiceFailureException {
+        boolean more = true;
+        int count = 0;
+        while (more) {
+            EntityList<Observation> observations;
+            observations = ds.observations().query().list();
+            if (observations != null) {
+                if (observations.getCount() > 0) {
+                    System.out.println(observations.getCount() + " to go.");
+                } else {
+                    more = false;
+                }
+                for (Observation o : observations) {
+                    service.delete(o);
+                    count++;
+                }
+                System.out.println("Deleted " + count + " observations.");
+            }
+        }
     }
 
     public static void main(String[] args) throws ServiceFailureException, URISyntaxException, MalformedURLException, IOException {
-        URI baseUri = URI.create(BASE_URL);
+        URL baseUri = new URL(BASE_URL);
         service = new SensorThingsService(baseUri);
 
         // create OpenWeatherData Sensor for Karlsruhe
         ReadOpenWeatherForecast reader = new ReadOpenWeatherForecast();
-        reader.createOpenWeatherSensor();
+        // get DataStream for CityId
+        // create DataStream and ForeCastSensor if not existing
+        Datastream ds = reader.getDataStream(OPEN_WEATHER_API_KARLSRUHE_CITY_ID);
 
-        reader.readForecastData();
-        reader.getObservation(OPEN_WEATHER_API_KARLSRUHE_CITY_ID);
+        // get forecast data from OpenWeatherMap server
+        JsonNode forecast = reader.readForecastData();
+
+        // remove existing forecast data
+        reader.cleanForcastData(ds);
+
+        // convert and store forecast data
+        reader.storeForecastData(ds, forecast);
     }
 
 }

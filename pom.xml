@@ -5,13 +5,23 @@
     <artifactId>WeatherForecast</artifactId>
     <version>1.0-SNAPSHOT</version>
     <packaging>jar</packaging>
+    
+    <repositories>
+        <repository>
+            <id>bintray-fraunhoferiosb-Maven</id>
+            <name>bintray</name>
+            <url>http://dl.bintray.com/fraunhoferiosb/Maven</url>
+        </repository>
+    </repositories>
+            
     <dependencies>
         <dependency>
-            <groupId>${project.groupId}</groupId>
+            <groupId>de.fraunhofer.iosb.ilt</groupId>
             <artifactId>SensorThingsClient</artifactId>
-            <version>0.0.1-SNAPSHOT</version>
+            <version>0.3</version>
         </dependency>
     </dependencies>
+    
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.compiler.source>1.8</maven.compiler.source>
