@@ -51,25 +51,13 @@ import org.geojson.Point;
 public class ReadOpenWeatherForecast {
 
     private static Properties props;
-//    private static final String OPEN_WEATHER_API_KARLSRUHE_CITY_ID = "3214104";
-//    private static final String OPEN_WEATHER_API_PARIS_CITY_ID = "3214104";
-//    private static final String OPEN_WEATHER_API_HZG_APPID = "1e12aa36e7c7c42296496089072ef68a";
-//    private static final String OPEN_WEATHER_API_URL = "http://api.openweathermap.org/data/2.5/";
-//
-//    private static final String BASE_URL = "http://akme-a3.iosb.fraunhofer.de:80/SensorThingsService/v1.0/";
-//    // to be moved to properties file
-//    private long SENSOR_ID = 332;
-//    private long THING_ID = 1;
-//    private long PROPERTY_ID = 1;
-//    private long LOCATION_ID = 1;
-//    private long DATASTREAM_ID = 358;
-
     private static SensorThingsService service;
 
     /**
      *
      * @return @throws ServiceFailureException
      * @throws URISyntaxException
+     * @throws java.io.IOException
      */
     public Datastream createOpenWeatherSensor() throws ServiceFailureException, URISyntaxException, IOException {
         boolean saveProps = false;
@@ -131,6 +119,7 @@ public class ReadOpenWeatherForecast {
      * @return
      * @throws ServiceFailureException
      * @throws URISyntaxException
+     * @throws java.io.IOException
      */
     public Datastream getDataStream(String cityCode) throws ServiceFailureException, URISyntaxException, IOException {
 
@@ -300,7 +289,5 @@ public class ReadOpenWeatherForecast {
 
         // convert and store forecast data
         reader.storeForecastData(ds, forecast);
-
     }
-
 }
