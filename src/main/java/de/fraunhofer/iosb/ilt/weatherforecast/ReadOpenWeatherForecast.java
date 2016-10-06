@@ -51,18 +51,18 @@ import org.geojson.Point;
 public class ReadOpenWeatherForecast {
 
     private static Properties props;
-    private static final String OPEN_WEATHER_API_KARLSRUHE_CITY_ID = "3214104";
-    private static final String OPEN_WEATHER_API_PARIS_CITY_ID = "3214104";
-    private static final String OPEN_WEATHER_API_HZG_APPID = "1e12aa36e7c7c42296496089072ef68a";
-    private static final String OPEN_WEATHER_API_URL = "http://api.openweathermap.org/data/2.5/";
-
-    private static final String BASE_URL = "http://akme-a3.iosb.fraunhofer.de:80/SensorThingsService/v1.0/";
-    // to be moved to properties file
-    private long SENSOR_ID = 332;
-    private long THING_ID = 1;
-    private long PROPERTY_ID = 1;
-    private long LOCATION_ID = 1;
-    private long DATASTREAM_ID = 358;
+//    private static final String OPEN_WEATHER_API_KARLSRUHE_CITY_ID = "3214104";
+//    private static final String OPEN_WEATHER_API_PARIS_CITY_ID = "3214104";
+//    private static final String OPEN_WEATHER_API_HZG_APPID = "1e12aa36e7c7c42296496089072ef68a";
+//    private static final String OPEN_WEATHER_API_URL = "http://api.openweathermap.org/data/2.5/";
+//
+//    private static final String BASE_URL = "http://akme-a3.iosb.fraunhofer.de:80/SensorThingsService/v1.0/";
+//    // to be moved to properties file
+//    private long SENSOR_ID = 332;
+//    private long THING_ID = 1;
+//    private long PROPERTY_ID = 1;
+//    private long LOCATION_ID = 1;
+//    private long DATASTREAM_ID = 358;
 
     private static SensorThingsService service;
 
@@ -71,11 +71,14 @@ public class ReadOpenWeatherForecast {
      * @return @throws ServiceFailureException
      * @throws URISyntaxException
      */
-    public Datastream createOpenWeatherSensor() throws ServiceFailureException, URISyntaxException {
+    public Datastream createOpenWeatherSensor() throws ServiceFailureException, URISyntaxException, IOException {
+        boolean saveProps = false;
         Sensor ows = service.sensors().find(Long.parseLong(props.getProperty("SENSOR_ID")));
         if (ows == null) {
             ows = new Sensor("OpenWeatherData", "OpenWeatherData Server free service", "text", "Some metadata.");
             service.create(ows);
+            props.setProperty("SENSOR_ID", String.valueOf(ows.getId()));
+            saveProps = true;
         }
 
         //Sensor ows = new Sensor("OpenWeatherData", "OpenWeatherData Server free service", "text", "Some metadata.");
@@ -83,12 +86,16 @@ public class ReadOpenWeatherForecast {
         if (obsProp1 == null) {
             obsProp1 = new ObservedProperty("Temperature", new URI("http://ucom.org/temperature"), "forecast temperature");
             service.create(obsProp1);
+            props.setProperty("TEMPERATURE_ID", String.valueOf(obsProp1.getId()));
+            saveProps = true;
         }
 
         Thing iosb = service.things().find(Long.parseLong(props.getProperty("THING_IOSB_KA_ID")));
         if (iosb == null) {
             iosb = new Thing("IOSB-KA", "IOSB Building, Fraunhoferstr. 1, 76131 Karlsruhe");
             service.create(iosb);
+            props.setProperty("THING_IOSB_KA_ID", String.valueOf(iosb.getId()));
+            saveProps = true;
         }
 
         Location location = service.locations().find(Long.parseLong(props.getProperty("IOSB_LOCATION_ID")));
@@ -96,17 +103,25 @@ public class ReadOpenWeatherForecast {
             location = new Location("Location IOSB-KA", "Location of IOSB Building in Karlsruhe", "application/vnd.geo+json", new Point(8, 52));
             location.getThings().add(iosb);
             service.create(location);
+            props.setProperty("IOSB_LOCATION_ID", String.valueOf(location.getId()));
+            saveProps = true;
         }
 
         Datastream datastream = service.datastreams().find(Long.parseLong(props.getProperty("DATASTREAM_ID")));
         if (datastream == null) {
-            datastream = new Datastream("forecast", "Temperature forecast", OPEN_WEATHER_API_KARLSRUHE_CITY_ID, new UnitOfMeasurement("degree kelvin", "°K", "ucum:T"));
+            datastream = new Datastream("forecast", "Temperature forecast", props.getProperty("KARLSRUHE_CITY_ID"), new UnitOfMeasurement("degree kelvin", "°K", "ucum:T"));
             datastream.setThing(iosb);
             datastream.setSensor(ows);
             datastream.setObservedProperty(obsProp1);
             service.create(datastream);
+            props.setProperty("DATASTREAM_ID", String.valueOf(datastream.getId()));
+            saveProps = true;
         }
 
+        if (saveProps) {
+            props.store(new FileOutputStream("config.properties"), "EBITA OpenWeatherData Scanner");
+
+        }
         return datastream;
     }
 
@@ -117,7 +132,7 @@ public class ReadOpenWeatherForecast {
      * @throws ServiceFailureException
      * @throws URISyntaxException
      */
-    public Datastream getDataStream(String cityCode) throws ServiceFailureException, URISyntaxException {
+    public Datastream getDataStream(String cityCode) throws ServiceFailureException, URISyntaxException, IOException {
 
         Datastream ds = null;
         ds = service.datastreams().find(Long.parseLong(props.getProperty("DATASTREAM_ID")));
@@ -146,7 +161,7 @@ public class ReadOpenWeatherForecast {
         CloseableHttpClient httpclient = HttpClients.createDefault();
         String result = "";
         try {
-            String url = OPEN_WEATHER_API_URL + "forecast?id=" + OPEN_WEATHER_API_KARLSRUHE_CITY_ID + "&appid=" + OPEN_WEATHER_API_HZG_APPID;
+            String url = props.getProperty("OPEN_WEATHER_API_URL") + "forecast?id=" + props.getProperty("KARLSRUHE_CITY_ID") + "&appid=" + props.getProperty("OPEN_WEATHER_API_APPID");
 
             //HttpGet httpget = new HttpGet(OPEN_WEATHER_API_URL);
             HttpGet httpget = new HttpGet(url);
@@ -264,19 +279,18 @@ public class ReadOpenWeatherForecast {
             props.setProperty("IOSB_LOCATION_ID", "296");
             props.setProperty("DATASTREAM_ID", "359");
 
-            props.store(
-                    new FileOutputStream("config.properties"), "EBITA OpenWeatherData Scanner");
+            props.store(new FileOutputStream("config.properties"), "EBITA OpenWeatherData Scanner");
             return;
         }
 
-        URL baseUri = new URL(BASE_URL);
+        URL baseUri = new URL(props.getProperty("BASE_URL"));
         service = new SensorThingsService(baseUri);
 
         // create OpenWeatherData Sensor for Karlsruhe
         ReadOpenWeatherForecast reader = new ReadOpenWeatherForecast();
 
         // get DataStream for CityId = Karlsruhe 
-        Datastream ds = reader.getDataStream(OPEN_WEATHER_API_KARLSRUHE_CITY_ID);
+        Datastream ds = reader.getDataStream(props.getProperty("KARLSRUHE_CITY_ID"));
 
         // get forecast data from OpenWeatherMap server
         JsonNode forecast = reader.readForecastData();
