@@ -10,5 +10,3 @@ BASE_URL=http\://ebita.iosb.fraunhofer.de\:80/v1.0/
 PARIS_CITY_ID=3214104
 OPEN_WEATHER_API_APPID=5d0ac5c404f2f288b775ef63ba3fde80
 OPEN_WEATHER_API_URL=http\://api.openweathermap.org/data/2.5/
-proxyhost=proxy-ka.iosb.fraunhofer.de
-proxyport=80

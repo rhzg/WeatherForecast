@@ -24,7 +24,7 @@
                     </descriptorRefs>
                     <archive>
                         <manifest>
-                            <mainClass>org.sample.App</mainClass>
+                            <mainClass>de.fraunhofer.iosb.ilt.weatherforecast.ReadOpenWeatherForecast</mainClass>
                         </manifest>
                     </archive>
                 </configuration>

@@ -155,11 +155,15 @@ public class ReadOpenWeatherForecast {
             //HttpGet httpget = new HttpGet(OPEN_WEATHER_API_URL);
             HttpGet httpget = new HttpGet(url);
 
-            HttpHost proxy = new HttpHost("proxy-ka.iosb.fraunhofer.de", 80, "http");
-            RequestConfig config = RequestConfig.custom()
-                    .setProxy(proxy)
-                    .build();
-            httpget.setConfig(config);
+            String proxyhost = props.getProperty("proxyhost", "");
+            int proxyport = Integer.parseInt(props.getProperty("proxyport", "80"));
+            if (!proxyhost.isEmpty()) {
+                HttpHost proxy = new HttpHost(proxyhost, proxyport, "http");
+                RequestConfig config = RequestConfig.custom()
+                        .setProxy(proxy)
+                        .build();
+                httpget.setConfig(config);
+            }
 
             System.out.println("Executing request " + httpget.getRequestLine());
 
@@ -267,6 +271,11 @@ public class ReadOpenWeatherForecast {
             props.setProperty("TEMPERATURE_ID", "331");
             props.setProperty("IOSB_LOCATION_ID", "296");
             props.setProperty("DATASTREAM_ID", "359");
+            props.setProperty("proxyhost", "proxy-ka.iosb.fraunhofer.de");
+            props.setProperty("proxyport", "80");
+            
+                        String proxyhost = props.getProperty("proxyhost", "");
+            int proxyport = Integer.parseInt(props.getProperty("proxyport", "80"));
 
             props.store(new FileOutputStream("config.properties"), "EBITA OpenWeatherData Scanner");
             return;
