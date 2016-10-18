@@ -64,19 +64,22 @@ public class ReadOpenWeatherForecast {
     private static final String PROXYHOST = "proxyhost";
     private static final String PROXYPORT = "proxyport";
 
+    private static final int MAX_ENTRIES = 1000;
+
     private static Properties props;
     private static SensorThingsService service;
 
     private static final org.slf4j.Logger LOGGER = LoggerFactory.getLogger(ReadOpenWeatherForecast.class);
 
-    /** 
+    /**
      * SensorThings structure:
-     * 
-     * <Sensor OpenWeatherData
-     * <Datastream City A <Thing Buidling x <Location buiding x location>>>
-     * <Datastream City b <Thing Buidling y <Location buiding y location>>>
-     * >
-     * @return @throws ServiceFailureException
+     *
+     * <Sensor OpenWeatherData <Datastream City A <Thing Buidling x
+     * <Location buiding x location>>> <Datastream City b <Thing Buidling y
+     * <Location buiding y location>>> > @return @t
+     *
+     * hrows ServiceFailureException
+     *
      * @throws URISyntaxException
      * @throws java.io.IOException
      */
@@ -198,6 +201,9 @@ public class ReadOpenWeatherForecast {
 
             ObjectMapper mapper = new ObjectMapper();
             JsonNode forecastData = mapper.readValue(result, JsonNode.class);
+
+            LOGGER.info("forecast data fetched");
+
             return forecastData.path("list");
         } finally {
             httpclient.close();
@@ -211,6 +217,7 @@ public class ReadOpenWeatherForecast {
      * @param forecast
      */
     public void storeForecastData(Datastream ds, JsonNode forecast) {
+        int count = 0;
         Calendar zeit = Calendar.getInstance();
         DateTimeFormatter f = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSSX")
                 .withZone(ZoneOffset.UTC);
@@ -219,18 +226,19 @@ public class ReadOpenWeatherForecast {
             JsonNode temp = forecast.path(i).path("main").path("temp");
             zeit.setTimeInMillis(time.asLong() * 1000);
             //System.out.println(f.format(zeit.toInstant()) + ": " + temp.toString());
-            LOGGER.info("forecast value: " + f.format(zeit.toInstant()) + " = " + temp.toString());
+            LOGGER.debug("forecast value: " + f.format(zeit.toInstant()) + " = " + temp.toString());
 
             Observation o = new Observation(temp.toString(), ds);
             o.setPhenomenonTime(ZonedDateTime.parse(f.format(zeit.toInstant())));
             try {
                 service.create(o);
+                count++;
             } catch (ServiceFailureException ex) {
                 Logger.getLogger(ReadOpenWeatherForecast.class
                         .getName()).log(Level.SEVERE, null, ex);
             }
         }
-
+        LOGGER.info("new forcast data added: " + count + " new observations");
     }
 
     /**
@@ -240,26 +248,20 @@ public class ReadOpenWeatherForecast {
      * @throws de.fraunhofer.iosb.ilt.sta.ServiceFailureException
      */
     public void cleanForcastData(Datastream ds) throws ServiceFailureException {
-        boolean more = true;
         int count = 0;
-        while (more) {
-            EntityList<Observation> observations;
-            observations = ds.observations().query().list();
-            if (observations != null) {
-                if (observations.getCount() > 0) {
-                    //System.out.println(observations.getCount() + " to go.");
-                    LOGGER.info("delete observation: " + observations.getCount() + " to go.");
-                } else {
-                    more = false;
-                }
-                for (Observation o : observations) {
-                    service.delete(o);
-                    count++;
-                }
-                //System.out.println("Deleted " + count + " observations.");
-                LOGGER.info("Deleted " + count + " observations.");
+        EntityList<Observation> observations;
+        observations = ds.observations().query().top(MAX_ENTRIES).list();
+        if (observations != null) {
+            Iterator<Observation> it = observations.fullIterator();
+            while (it.hasNext()) {
+                Observation next = it.next();
+                service.delete(next);
+                count++;
             }
+        } else {
+            throw new ServiceFailureException();
         }
+        LOGGER.info("delete old forcast data: " + count + " observations deleted.");
     }
 
     /**
