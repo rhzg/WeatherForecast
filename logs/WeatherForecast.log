@@ -125,3 +125,96 @@
 2016-10-18 10:05:09,251 730  [main] INFO  d.f.i.i.w.ReadOpenWeatherForecast - forecast data fetched
 2016-10-18 10:05:36,470 27949 [main] INFO  d.f.i.i.w.ReadOpenWeatherForecast - delete old forcast data: 37 observations deleted.
 2016-10-18 10:05:36,825 28304 [main] INFO  d.f.i.i.w.ReadOpenWeatherForecast - new forcast data added: 37 new observations
+2016-10-18 10:31:29,446 627  [main] INFO  d.f.i.i.w.ReadOpenWeatherForecast - Executing request 
+2016-10-18 10:31:29,559 740  [main] INFO  d.f.i.i.w.ReadOpenWeatherForecast - forecast data fetched
+2016-10-18 10:31:54,713 25894 [main] INFO  d.f.i.i.w.ReadOpenWeatherForecast - delete old forcast data: 37 observations deleted.
+2016-10-18 10:31:54,989 26170 [main] INFO  d.f.i.i.w.ReadOpenWeatherForecast - new forcast data added: 37 new observations
+2016-10-18 10:32:41,448 618  [main] INFO  d.f.i.i.w.ReadOpenWeatherForecast - Executing request GET http://api.openweathermap.org/data/2.5/forecast?id=3214104&appid=5d0ac5c404f2f288b775ef63ba3fde80 HTTP/1.1
+2016-10-18 10:32:41,535 705  [main] INFO  d.f.i.i.w.ReadOpenWeatherForecast - forecast data fetched
+2016-10-18 10:33:08,521 27691 [main] INFO  d.f.i.i.w.ReadOpenWeatherForecast - delete old forcast data: 37 observations deleted.
+2016-10-18 10:33:08,811 27981 [main] INFO  d.f.i.i.w.ReadOpenWeatherForecast - new forcast data added: 37 new observations
+2016-10-18 10:33:15,843 716  [main] INFO  d.f.i.i.w.ReadOpenWeatherForecast - forecast data fetched
+2016-10-18 10:33:41,673 26546 [main] INFO  d.f.i.i.w.ReadOpenWeatherForecast - delete old forcast data: 37 observations deleted.
+2016-10-18 10:33:42,009 26882 [main] INFO  d.f.i.i.w.ReadOpenWeatherForecast - new forcast data added: 37 new observations
+2016-10-18 10:33:47,631 387  [main] DEBUG d.f.iosb.ilt.sta.dao.BaseDao - Fetching: http://ebita.iosb.fraunhofer.de:80/v1.0/Datastreams(93)
+2016-10-18 10:33:47,978 734  [main] INFO  d.f.i.i.w.ReadOpenWeatherForecast - forecast data fetched
+2016-10-18 10:33:47,981 737  [main] DEBUG d.f.iosb.ilt.sta.query.Query - Fetching: http://ebita.iosb.fraunhofer.de:80/v1.0/Datastreams(93)/Observations?%24top=1000
+2016-10-18 10:33:48,703 1459 [main] DEBUG d.f.iosb.ilt.sta.dao.BaseDao - Deleting: http://ebita.iosb.fraunhofer.de:80/v1.0/Observations(2139533)
+2016-10-18 10:33:49,371 2127 [main] DEBUG d.f.iosb.ilt.sta.dao.BaseDao - Deleting: http://ebita.iosb.fraunhofer.de:80/v1.0/Observations(2139534)
+2016-10-18 10:33:50,059 2815 [main] DEBUG d.f.iosb.ilt.sta.dao.BaseDao - Deleting: http://ebita.iosb.fraunhofer.de:80/v1.0/Observations(2139535)
+2016-10-18 10:33:50,720 3476 [main] DEBUG d.f.iosb.ilt.sta.dao.BaseDao - Deleting: http://ebita.iosb.fraunhofer.de:80/v1.0/Observations(2139536)
+2016-10-18 10:33:51,387 4143 [main] DEBUG d.f.iosb.ilt.sta.dao.BaseDao - Deleting: http://ebita.iosb.fraunhofer.de:80/v1.0/Observations(2139537)
+2016-10-18 10:33:52,047 4803 [main] DEBUG d.f.iosb.ilt.sta.dao.BaseDao - Deleting: http://ebita.iosb.fraunhofer.de:80/v1.0/Observations(2139538)
+2016-10-18 10:33:52,713 5469 [main] DEBUG d.f.iosb.ilt.sta.dao.BaseDao - Deleting: http://ebita.iosb.fraunhofer.de:80/v1.0/Observations(2139539)
+2016-10-18 10:33:53,378 6134 [main] DEBUG d.f.iosb.ilt.sta.dao.BaseDao - Deleting: http://ebita.iosb.fraunhofer.de:80/v1.0/Observations(2139540)
+2016-10-18 10:33:54,050 6806 [main] DEBUG d.f.iosb.ilt.sta.dao.BaseDao - Deleting: http://ebita.iosb.fraunhofer.de:80/v1.0/Observations(2139541)
+2016-10-18 10:33:54,723 7479 [main] DEBUG d.f.iosb.ilt.sta.dao.BaseDao - Deleting: http://ebita.iosb.fraunhofer.de:80/v1.0/Observations(2139542)
+2016-10-18 10:33:55,386 8142 [main] DEBUG d.f.iosb.ilt.sta.dao.BaseDao - Deleting: http://ebita.iosb.fraunhofer.de:80/v1.0/Observations(2139543)
+2016-10-18 10:33:56,047 8803 [main] DEBUG d.f.iosb.ilt.sta.dao.BaseDao - Deleting: http://ebita.iosb.fraunhofer.de:80/v1.0/Observations(2139544)
+2016-10-18 10:33:56,715 9471 [main] DEBUG d.f.iosb.ilt.sta.dao.BaseDao - Deleting: http://ebita.iosb.fraunhofer.de:80/v1.0/Observations(2139545)
+2016-10-18 10:33:57,383 10139 [main] DEBUG d.f.iosb.ilt.sta.dao.BaseDao - Deleting: http://ebita.iosb.fraunhofer.de:80/v1.0/Observations(2139546)
+2016-10-18 10:33:58,052 10808 [main] DEBUG d.f.iosb.ilt.sta.dao.BaseDao - Deleting: http://ebita.iosb.fraunhofer.de:80/v1.0/Observations(2139547)
+2016-10-18 10:33:58,717 11473 [main] DEBUG d.f.iosb.ilt.sta.dao.BaseDao - Deleting: http://ebita.iosb.fraunhofer.de:80/v1.0/Observations(2139548)
+2016-10-18 10:33:59,381 12137 [main] DEBUG d.f.iosb.ilt.sta.dao.BaseDao - Deleting: http://ebita.iosb.fraunhofer.de:80/v1.0/Observations(2139549)
+2016-10-18 10:34:00,046 12802 [main] DEBUG d.f.iosb.ilt.sta.dao.BaseDao - Deleting: http://ebita.iosb.fraunhofer.de:80/v1.0/Observations(2139550)
+2016-10-18 10:34:00,708 13464 [main] DEBUG d.f.iosb.ilt.sta.dao.BaseDao - Deleting: http://ebita.iosb.fraunhofer.de:80/v1.0/Observations(2139551)
+2016-10-18 10:34:01,372 14128 [main] DEBUG d.f.iosb.ilt.sta.dao.BaseDao - Deleting: http://ebita.iosb.fraunhofer.de:80/v1.0/Observations(2139552)
+2016-10-18 10:34:02,032 14788 [main] DEBUG d.f.iosb.ilt.sta.dao.BaseDao - Deleting: http://ebita.iosb.fraunhofer.de:80/v1.0/Observations(2139553)
+2016-10-18 10:34:02,694 15450 [main] DEBUG d.f.iosb.ilt.sta.dao.BaseDao - Deleting: http://ebita.iosb.fraunhofer.de:80/v1.0/Observations(2139554)
+2016-10-18 10:34:03,359 16115 [main] DEBUG d.f.iosb.ilt.sta.dao.BaseDao - Deleting: http://ebita.iosb.fraunhofer.de:80/v1.0/Observations(2139555)
+2016-10-18 10:34:04,019 16775 [main] DEBUG d.f.iosb.ilt.sta.dao.BaseDao - Deleting: http://ebita.iosb.fraunhofer.de:80/v1.0/Observations(2139556)
+2016-10-18 10:34:04,687 17443 [main] DEBUG d.f.iosb.ilt.sta.dao.BaseDao - Deleting: http://ebita.iosb.fraunhofer.de:80/v1.0/Observations(2139557)
+2016-10-18 10:34:05,529 18285 [main] DEBUG d.f.iosb.ilt.sta.dao.BaseDao - Deleting: http://ebita.iosb.fraunhofer.de:80/v1.0/Observations(2139558)
+2016-10-18 10:34:06,191 18947 [main] DEBUG d.f.iosb.ilt.sta.dao.BaseDao - Deleting: http://ebita.iosb.fraunhofer.de:80/v1.0/Observations(2139559)
+2016-10-18 10:34:06,851 19607 [main] DEBUG d.f.iosb.ilt.sta.dao.BaseDao - Deleting: http://ebita.iosb.fraunhofer.de:80/v1.0/Observations(2139560)
+2016-10-18 10:34:07,521 20277 [main] DEBUG d.f.iosb.ilt.sta.dao.BaseDao - Deleting: http://ebita.iosb.fraunhofer.de:80/v1.0/Observations(2139561)
+2016-10-18 10:34:08,183 20939 [main] DEBUG d.f.iosb.ilt.sta.dao.BaseDao - Deleting: http://ebita.iosb.fraunhofer.de:80/v1.0/Observations(2139562)
+2016-10-18 10:34:08,872 21628 [main] DEBUG d.f.iosb.ilt.sta.dao.BaseDao - Deleting: http://ebita.iosb.fraunhofer.de:80/v1.0/Observations(2139563)
+2016-10-18 10:34:09,538 22294 [main] DEBUG d.f.iosb.ilt.sta.dao.BaseDao - Deleting: http://ebita.iosb.fraunhofer.de:80/v1.0/Observations(2139564)
+2016-10-18 10:34:10,203 22959 [main] DEBUG d.f.iosb.ilt.sta.dao.BaseDao - Deleting: http://ebita.iosb.fraunhofer.de:80/v1.0/Observations(2139565)
+2016-10-18 10:34:10,899 23655 [main] DEBUG d.f.iosb.ilt.sta.dao.BaseDao - Deleting: http://ebita.iosb.fraunhofer.de:80/v1.0/Observations(2139566)
+2016-10-18 10:34:11,564 24320 [main] DEBUG d.f.iosb.ilt.sta.dao.BaseDao - Deleting: http://ebita.iosb.fraunhofer.de:80/v1.0/Observations(2139567)
+2016-10-18 10:34:12,223 24979 [main] DEBUG d.f.iosb.ilt.sta.dao.BaseDao - Deleting: http://ebita.iosb.fraunhofer.de:80/v1.0/Observations(2139568)
+2016-10-18 10:34:12,885 25641 [main] DEBUG d.f.iosb.ilt.sta.dao.BaseDao - Deleting: http://ebita.iosb.fraunhofer.de:80/v1.0/Observations(2139569)
+2016-10-18 10:34:13,547 26303 [main] INFO  d.f.i.i.w.ReadOpenWeatherForecast - delete old forcast data: 37 observations deleted.
+2016-10-18 10:34:13,571 26327 [main] DEBUG d.f.iosb.ilt.sta.dao.BaseDao - Posting to: http://ebita.iosb.fraunhofer.de:80/v1.0/Observations
+2016-10-18 10:34:13,581 26337 [main] DEBUG d.f.iosb.ilt.sta.dao.BaseDao - Posting to: http://ebita.iosb.fraunhofer.de:80/v1.0/Observations
+2016-10-18 10:34:13,590 26346 [main] DEBUG d.f.iosb.ilt.sta.dao.BaseDao - Posting to: http://ebita.iosb.fraunhofer.de:80/v1.0/Observations
+2016-10-18 10:34:13,596 26352 [main] DEBUG d.f.iosb.ilt.sta.dao.BaseDao - Posting to: http://ebita.iosb.fraunhofer.de:80/v1.0/Observations
+2016-10-18 10:34:13,602 26358 [main] DEBUG d.f.iosb.ilt.sta.dao.BaseDao - Posting to: http://ebita.iosb.fraunhofer.de:80/v1.0/Observations
+2016-10-18 10:34:13,608 26364 [main] DEBUG d.f.iosb.ilt.sta.dao.BaseDao - Posting to: http://ebita.iosb.fraunhofer.de:80/v1.0/Observations
+2016-10-18 10:34:13,614 26370 [main] DEBUG d.f.iosb.ilt.sta.dao.BaseDao - Posting to: http://ebita.iosb.fraunhofer.de:80/v1.0/Observations
+2016-10-18 10:34:13,621 26377 [main] DEBUG d.f.iosb.ilt.sta.dao.BaseDao - Posting to: http://ebita.iosb.fraunhofer.de:80/v1.0/Observations
+2016-10-18 10:34:13,627 26383 [main] DEBUG d.f.iosb.ilt.sta.dao.BaseDao - Posting to: http://ebita.iosb.fraunhofer.de:80/v1.0/Observations
+2016-10-18 10:34:13,633 26389 [main] DEBUG d.f.iosb.ilt.sta.dao.BaseDao - Posting to: http://ebita.iosb.fraunhofer.de:80/v1.0/Observations
+2016-10-18 10:34:13,639 26395 [main] DEBUG d.f.iosb.ilt.sta.dao.BaseDao - Posting to: http://ebita.iosb.fraunhofer.de:80/v1.0/Observations
+2016-10-18 10:34:13,646 26402 [main] DEBUG d.f.iosb.ilt.sta.dao.BaseDao - Posting to: http://ebita.iosb.fraunhofer.de:80/v1.0/Observations
+2016-10-18 10:34:13,652 26408 [main] DEBUG d.f.iosb.ilt.sta.dao.BaseDao - Posting to: http://ebita.iosb.fraunhofer.de:80/v1.0/Observations
+2016-10-18 10:34:13,658 26414 [main] DEBUG d.f.iosb.ilt.sta.dao.BaseDao - Posting to: http://ebita.iosb.fraunhofer.de:80/v1.0/Observations
+2016-10-18 10:34:13,663 26419 [main] DEBUG d.f.iosb.ilt.sta.dao.BaseDao - Posting to: http://ebita.iosb.fraunhofer.de:80/v1.0/Observations
+2016-10-18 10:34:13,672 26428 [main] DEBUG d.f.iosb.ilt.sta.dao.BaseDao - Posting to: http://ebita.iosb.fraunhofer.de:80/v1.0/Observations
+2016-10-18 10:34:13,679 26435 [main] DEBUG d.f.iosb.ilt.sta.dao.BaseDao - Posting to: http://ebita.iosb.fraunhofer.de:80/v1.0/Observations
+2016-10-18 10:34:13,691 26447 [main] DEBUG d.f.iosb.ilt.sta.dao.BaseDao - Posting to: http://ebita.iosb.fraunhofer.de:80/v1.0/Observations
+2016-10-18 10:34:13,698 26454 [main] DEBUG d.f.iosb.ilt.sta.dao.BaseDao - Posting to: http://ebita.iosb.fraunhofer.de:80/v1.0/Observations
+2016-10-18 10:34:13,705 26461 [main] DEBUG d.f.iosb.ilt.sta.dao.BaseDao - Posting to: http://ebita.iosb.fraunhofer.de:80/v1.0/Observations
+2016-10-18 10:34:13,712 26468 [main] DEBUG d.f.iosb.ilt.sta.dao.BaseDao - Posting to: http://ebita.iosb.fraunhofer.de:80/v1.0/Observations
+2016-10-18 10:34:13,720 26476 [main] DEBUG d.f.iosb.ilt.sta.dao.BaseDao - Posting to: http://ebita.iosb.fraunhofer.de:80/v1.0/Observations
+2016-10-18 10:34:13,728 26484 [main] DEBUG d.f.iosb.ilt.sta.dao.BaseDao - Posting to: http://ebita.iosb.fraunhofer.de:80/v1.0/Observations
+2016-10-18 10:34:13,738 26494 [main] DEBUG d.f.iosb.ilt.sta.dao.BaseDao - Posting to: http://ebita.iosb.fraunhofer.de:80/v1.0/Observations
+2016-10-18 10:34:13,747 26503 [main] DEBUG d.f.iosb.ilt.sta.dao.BaseDao - Posting to: http://ebita.iosb.fraunhofer.de:80/v1.0/Observations
+2016-10-18 10:34:13,763 26519 [main] DEBUG d.f.iosb.ilt.sta.dao.BaseDao - Posting to: http://ebita.iosb.fraunhofer.de:80/v1.0/Observations
+2016-10-18 10:34:13,778 26534 [main] DEBUG d.f.iosb.ilt.sta.dao.BaseDao - Posting to: http://ebita.iosb.fraunhofer.de:80/v1.0/Observations
+2016-10-18 10:34:13,786 26542 [main] DEBUG d.f.iosb.ilt.sta.dao.BaseDao - Posting to: http://ebita.iosb.fraunhofer.de:80/v1.0/Observations
+2016-10-18 10:34:13,793 26549 [main] DEBUG d.f.iosb.ilt.sta.dao.BaseDao - Posting to: http://ebita.iosb.fraunhofer.de:80/v1.0/Observations
+2016-10-18 10:34:13,801 26557 [main] DEBUG d.f.iosb.ilt.sta.dao.BaseDao - Posting to: http://ebita.iosb.fraunhofer.de:80/v1.0/Observations
+2016-10-18 10:34:13,808 26564 [main] DEBUG d.f.iosb.ilt.sta.dao.BaseDao - Posting to: http://ebita.iosb.fraunhofer.de:80/v1.0/Observations
+2016-10-18 10:34:13,815 26571 [main] DEBUG d.f.iosb.ilt.sta.dao.BaseDao - Posting to: http://ebita.iosb.fraunhofer.de:80/v1.0/Observations
+2016-10-18 10:34:13,822 26578 [main] DEBUG d.f.iosb.ilt.sta.dao.BaseDao - Posting to: http://ebita.iosb.fraunhofer.de:80/v1.0/Observations
+2016-10-18 10:34:13,829 26585 [main] DEBUG d.f.iosb.ilt.sta.dao.BaseDao - Posting to: http://ebita.iosb.fraunhofer.de:80/v1.0/Observations
+2016-10-18 10:34:13,835 26591 [main] DEBUG d.f.iosb.ilt.sta.dao.BaseDao - Posting to: http://ebita.iosb.fraunhofer.de:80/v1.0/Observations
+2016-10-18 10:34:13,843 26599 [main] DEBUG d.f.iosb.ilt.sta.dao.BaseDao - Posting to: http://ebita.iosb.fraunhofer.de:80/v1.0/Observations
+2016-10-18 10:34:13,851 26607 [main] DEBUG d.f.iosb.ilt.sta.dao.BaseDao - Posting to: http://ebita.iosb.fraunhofer.de:80/v1.0/Observations
+2016-10-18 10:34:13,857 26613 [main] INFO  d.f.i.i.w.ReadOpenWeatherForecast - new forcast data added: 37 new observations
+2016-10-18 10:34:26,187 681  [main] INFO  d.f.i.i.w.ReadOpenWeatherForecast - forecast data fetched
+2016-10-18 10:34:51,500 25994 [main] INFO  d.f.i.i.w.ReadOpenWeatherForecast - delete old forcast data: 37 observations deleted.
+2016-10-18 10:34:51,838 26332 [main] INFO  d.f.i.i.w.ReadOpenWeatherForecast - new forcast data added: 37 new observations

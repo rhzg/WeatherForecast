@@ -187,7 +187,7 @@ public class ReadOpenWeatherForecast {
                 httpget.setConfig(config);
             }
             //System.out.println("Executing request " + httpget.getRequestLine());
-            LOGGER.info("Executing request ", httpget.getRequestLine());
+            LOGGER.debug ("Executing request " + httpget.getRequestLine());
             CloseableHttpResponse response = httpclient.execute(httpget);
             int status = response.getStatusLine().getStatusCode();
             if (status >= 200 && status < 300) {
