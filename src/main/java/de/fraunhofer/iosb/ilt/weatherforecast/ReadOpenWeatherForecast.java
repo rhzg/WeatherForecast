@@ -1,7 +1,7 @@
 /*
  * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
+ * To change this template file, choose Tools | Templates and open the template
+ * in the editor.
  */
 package de.fraunhofer.iosb.ilt.weatherforecast;
 
@@ -45,40 +45,38 @@ import org.apache.http.util.EntityUtils;
 import org.geojson.Point;
 import org.slf4j.LoggerFactory;
 
+
 /**
- *
  * @author hzg
  */
 public class ReadOpenWeatherForecast {
 
-    private static final String KARLSRUHE_CITY_ID = "KARLSRUHE_CITY_ID";
-    private static final String PARIS_CITY_ID = "PARIS_CITY_ID";
-    private static final String OPEN_WEATHER_API_APPID = "OPEN_WEATHER_API_APPID";
-    private static final String OPEN_WEATHER_API_URL = "OPEN_WEATHER_API_URL";
-    private static final String BASE_URL = "BASE_URL";
-    private static final String SENSOR_ID = "SENSOR_ID";
-    private static final String THING_IOSB_KA_ID = "THING_IOSB_KA_ID";
-    private static final String TEMPERATURE_ID = "TEMPERATURE_ID";
-    private static final String IOSB_LOCATION_ID = "IOSB_LOCATION_ID";
-    private static final String DATASTREAM_ID = "DATASTREAM_ID";
-    private static final String PROXYHOST = "proxyhost";
-    private static final String PROXYPORT = "proxyport";
+    private static final String           KARLSRUHE_CITY_ID      = "KARLSRUHE_CITY_ID";
+    private static final String           PARIS_CITY_ID          = "PARIS_CITY_ID";
+    private static final String           OPEN_WEATHER_API_APPID = "OPEN_WEATHER_API_APPID";
+    private static final String           OPEN_WEATHER_API_URL   = "OPEN_WEATHER_API_URL";
+    private static final String           BASE_URL               = "BASE_URL";
+    private static final String           SENSOR_ID              = "SENSOR_ID";
+    private static final String           THING_IOSB_KA_ID       = "THING_IOSB_KA_ID";
+    private static final String           TEMPERATURE_ID         = "TEMPERATURE_ID";
+    private static final String           IOSB_LOCATION_ID       = "IOSB_LOCATION_ID";
+    private static final String           DATASTREAM_ID          = "DATASTREAM_ID";
+    private static final String           PROXYHOST              = "proxyhost";
+    private static final String           PROXYPORT              = "proxyport";
 
-    private static final int MAX_ENTRIES = 1000;
+    private static final int              MAX_ENTRIES            = 1000;
 
-    private static Properties props;
-    private static SensorThingsService service;
+    private static Properties             props;
+    private static SensorThingsService    service;
 
-    private static final org.slf4j.Logger LOGGER = LoggerFactory.getLogger(ReadOpenWeatherForecast.class);
+    private static final org.slf4j.Logger LOGGER                 = LoggerFactory.getLogger(ReadOpenWeatherForecast.class);
+
 
     /**
-     * SensorThings structure:
-     *
-     * <Sensor OpenWeatherData <Datastream City A <Thing Buidling x
-     * <Location buiding x location>>> <Datastream City b <Thing Buidling y
-     * <Location buiding y location>>> > @return @t
-     *
-     * hrows ServiceFailureException
+     * SensorThings structure: <Sensor OpenWeatherData <Datastream City A <Thing
+     * Buidling x <Location buiding x location>>> <Datastream City b <Thing
+     * Buidling y <Location buiding y location>>> > @return @t hrows
+     * ServiceFailureException
      *
      * @throws URISyntaxException
      * @throws java.io.IOException
@@ -137,78 +135,81 @@ public class ReadOpenWeatherForecast {
         return datastream;
     }
 
+
     /**
-     *
      * @param cityCode
-     * @return
+     * @return datastream for cityCode
      * @throws ServiceFailureException
      * @throws URISyntaxException
      * @throws java.io.IOException
      */
-    public Datastream getDataStream(String cityCode) throws ServiceFailureException, URISyntaxException, IOException {
+    public Datastream getDataStream(final String cityCode) throws ServiceFailureException, URISyntaxException, IOException {
 
         Datastream ds = null;
         ds = service.datastreams().find(Long.parseLong(props.getProperty(DATASTREAM_ID)));
         if (ds == null) {
-            ds = createOpenWeatherSensor();
+            ds = this.createOpenWeatherSensor();
             return ds;
         }
         return ds;
     }
 
+
     /**
      * Clean all OpenWeatherData related objects within Sensor Server
      */
     public void deleteOpenWeatherSensor() {
-
+        LOGGER.error("Method not implemented");
     }
+
 
     /**
      * Read the Forecast data from now and return the result
      *
-     * @return
+     * @return forecast data
      * @throws IOException
      */
     public JsonNode readForecastData() throws IOException {
         // read data from OpenWeatherData server
-        CloseableHttpClient httpclient = HttpClients.createDefault();
+        final CloseableHttpClient httpclient = HttpClients.createDefault();
         String result = "";
         try {
-            String url = props.getProperty(OPEN_WEATHER_API_URL) + "forecast?id=" + props.getProperty(KARLSRUHE_CITY_ID) + "&appid=" + props.getProperty(OPEN_WEATHER_API_APPID);
-            HttpGet httpget = new HttpGet(url);
+            final String url = props.getProperty(OPEN_WEATHER_API_URL) + "forecast?id=" + props.getProperty(KARLSRUHE_CITY_ID) + "&appid=" + props.getProperty(OPEN_WEATHER_API_APPID);
+            final HttpGet httpget = new HttpGet(url);
 
-            String host = props.getProperty(PROXYHOST, "");
+            final String host = props.getProperty(PROXYHOST, "");
             if (!host.isEmpty()) {
-                int port = Integer.parseInt(props.getProperty(PROXYPORT, "80"));
-                HttpHost proxy = new HttpHost(host, port, "http");
-                RequestConfig config = RequestConfig.custom()
-                        .setProxy(proxy)
-                        .build();
+                final int port = Integer.parseInt(props.getProperty(PROXYPORT, "80"));
+                final HttpHost proxy = new HttpHost(host, port, "http");
+                final RequestConfig config = RequestConfig.custom().setProxy(proxy).build();
                 httpget.setConfig(config);
             }
             //System.out.println("Executing request " + httpget.getRequestLine());
-            LOGGER.debug ("Executing request " + httpget.getRequestLine());
-            CloseableHttpResponse response = httpclient.execute(httpget);
-            int status = response.getStatusLine().getStatusCode();
+            LOGGER.debug("Executing request " + httpget.getRequestLine());
+            final CloseableHttpResponse response = httpclient.execute(httpget);
+            final int status = response.getStatusLine().getStatusCode();
             if (status >= 200 && status < 300) {
-                HttpEntity entity = response.getEntity();
+                final HttpEntity entity = response.getEntity();
                 if (entity != null) {
                     result = EntityUtils.toString(entity);
                 }
-            } else {
+            }
+            else {
                 throw new ClientProtocolException("Unexpected response status: " + status);
             }
 
-            ObjectMapper mapper = new ObjectMapper();
-            JsonNode forecastData = mapper.readValue(result, JsonNode.class);
+            final ObjectMapper mapper = new ObjectMapper();
+            final JsonNode forecastData = mapper.readValue(result, JsonNode.class);
 
             LOGGER.info("forecast data fetched");
 
             return forecastData.path("list");
-        } finally {
+        }
+        finally {
             httpclient.close();
         }
     }
+
 
     /**
      * Convert the forecast data into sensor server observations
@@ -216,30 +217,30 @@ public class ReadOpenWeatherForecast {
      * @param ds
      * @param forecast
      */
-    public void storeForecastData(Datastream ds, JsonNode forecast) {
+    public void storeForecastData(final Datastream ds, final JsonNode forecast) {
         int count = 0;
-        Calendar zeit = Calendar.getInstance();
-        DateTimeFormatter f = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSSX")
-                .withZone(ZoneOffset.UTC);
+        final Calendar zeit = Calendar.getInstance();
+        final DateTimeFormatter f = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSSX").withZone(ZoneOffset.UTC);
         for (int i = 0; i < forecast.size(); i++) {
-            JsonNode time = forecast.path(i).path("dt");
-            JsonNode temp = forecast.path(i).path("main").path("temp");
+            final JsonNode time = forecast.path(i).path("dt");
+            final JsonNode temp = forecast.path(i).path("main").path("temp");
             zeit.setTimeInMillis(time.asLong() * 1000);
             //System.out.println(f.format(zeit.toInstant()) + ": " + temp.toString());
             LOGGER.debug("forecast value: " + f.format(zeit.toInstant()) + " = " + temp.toString());
 
-            Observation o = new Observation(temp.toString(), ds);
+            final Observation o = new Observation(temp.toString(), ds);
             o.setPhenomenonTime(ZonedDateTime.parse(f.format(zeit.toInstant())));
             try {
                 service.create(o);
                 count++;
-            } catch (ServiceFailureException ex) {
-                Logger.getLogger(ReadOpenWeatherForecast.class
-                        .getName()).log(Level.SEVERE, null, ex);
+            }
+            catch (final ServiceFailureException ex) {
+                Logger.getLogger(ReadOpenWeatherForecast.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
         LOGGER.info("new forcast data added: " + count + " new observations");
     }
+
 
     /**
      * Remove all exisiting observations from datastream
@@ -247,38 +248,40 @@ public class ReadOpenWeatherForecast {
      * @param ds
      * @throws de.fraunhofer.iosb.ilt.sta.ServiceFailureException
      */
-    public void cleanForcastData(Datastream ds) throws ServiceFailureException {
+    public void cleanForcastData(final Datastream ds) throws ServiceFailureException {
         int count = 0;
         EntityList<Observation> observations;
         observations = ds.observations().query().top(MAX_ENTRIES).list();
         if (observations != null) {
-            Iterator<Observation> it = observations.fullIterator();
+            final Iterator<Observation> it = observations.fullIterator();
             while (it.hasNext()) {
-                Observation next = it.next();
+                final Observation next = it.next();
                 service.delete(next);
                 count++;
             }
-        } else {
+        }
+        else {
             throw new ServiceFailureException();
         }
         LOGGER.info("delete old forcast data: " + count + " observations deleted.");
     }
 
+
     /**
-     *
      * @param args
      * @throws ServiceFailureException
      * @throws URISyntaxException
      * @throws MalformedURLException
      * @throws IOException
      */
-    public static void main(String[] args) throws ServiceFailureException, URISyntaxException, MalformedURLException, IOException {
+    public static void main(final String[] args) throws ServiceFailureException, URISyntaxException, MalformedURLException, IOException {
 
         props = new Properties();
         try {
             props.load(new FileInputStream("config.properties"));
 
-        } catch (FileNotFoundException e) {
+        }
+        catch (final FileNotFoundException e) {
             LOGGER.warn("properties file has been created with default values. Please check your correct settings", e);
             //System.out.println(e);
             //System.out.println("properties file has been created with default values. Please check your correct settings");
@@ -300,17 +303,17 @@ public class ReadOpenWeatherForecast {
             return;
         }
 
-        URL baseUri = new URL(props.getProperty(BASE_URL));
+        final URL baseUri = new URL(props.getProperty(BASE_URL));
         service = new SensorThingsService(baseUri);
 
         // create OpenWeatherData Sensor for Karlsruhe
-        ReadOpenWeatherForecast reader = new ReadOpenWeatherForecast();
+        final ReadOpenWeatherForecast reader = new ReadOpenWeatherForecast();
 
-        // get DataStream for CityId = Karlsruhe 
-        Datastream ds = reader.getDataStream(props.getProperty(KARLSRUHE_CITY_ID));
+        // get DataStream for CityId = Karlsruhe
+        final Datastream ds = reader.getDataStream(props.getProperty(KARLSRUHE_CITY_ID));
 
         // get forecast data from OpenWeatherMap server
-        JsonNode forecast = reader.readForecastData();
+        final JsonNode forecast = reader.readForecastData();
 
         // remove existing forecast data
         reader.cleanForcastData(ds);
