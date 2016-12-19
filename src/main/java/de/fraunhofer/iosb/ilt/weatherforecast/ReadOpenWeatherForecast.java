@@ -228,7 +228,7 @@ public class ReadOpenWeatherForecast {
             //System.out.println(f.format(zeit.toInstant()) + ": " + temp.toString());
             LOGGER.debug("forecast value: " + f.format(zeit.toInstant()) + " = " + temp.toString());
 
-            final Observation o = new Observation(temp.toString(), ds);
+            final Observation o = new Observation(temp.asDouble(), ds);
             o.setPhenomenonTime(ZonedDateTime.parse(f.format(zeit.toInstant())));
             try {
                 service.create(o);
