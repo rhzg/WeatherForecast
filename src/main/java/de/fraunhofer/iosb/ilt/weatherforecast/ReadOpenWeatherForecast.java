@@ -119,7 +119,8 @@ public class ReadOpenWeatherForecast {
 
         Datastream datastream = service.datastreams().find(Long.parseLong(props.getProperty(DATASTREAM_ID)));
         if (datastream == null) {
-            datastream = new Datastream("forecast", "Temperature forecast", props.getProperty(KARLSRUHE_CITY_ID), new UnitOfMeasurement("degree kelvin", "°K", "ucum:T"));
+            // datastream for KARLSRUHE_CITY_ID, values are  given as UnitOfMeasurement("degree kelvin", "°K", "ucum:T") but will be mapped to degree celsius
+            datastream = new Datastream("forecast", "Temperature forecast", props.getProperty(KARLSRUHE_CITY_ID), new UnitOfMeasurement("degree celsius", "°C", "ucum:T"));
             datastream.setThing(iosb);
             datastream.setSensor(ows);
             datastream.setObservedProperty(obsProp1);
@@ -144,10 +145,11 @@ public class ReadOpenWeatherForecast {
      * @throws java.io.IOException
      */
     public Datastream getDataStream(final String cityCode) throws ServiceFailureException, URISyntaxException, IOException {
-
+        // find datastream with given id
         Datastream ds = null;
         ds = service.datastreams().find(Long.parseLong(props.getProperty(DATASTREAM_ID)));
         if (ds == null) {
+            // if no datastream is found, initialize sensor description
             ds = this.createOpenWeatherSensor();
             return ds;
         }
@@ -158,8 +160,13 @@ public class ReadOpenWeatherForecast {
     /**
      * Clean all OpenWeatherData related objects within Sensor Server
      */
-    public void deleteOpenWeatherSensor() {
-        LOGGER.error("Method not implemented");
+    public void deleteOpenWeatherSensor() throws ServiceFailureException {
+        LOGGER.warn ("Method only deletes data stream. Other entries need to be removed manually if needed");
+        Datastream ds = null;
+        ds = service.datastreams().find(Long.parseLong(props.getProperty(DATASTREAM_ID)));
+        if (ds == null) {
+            service.delete(ds);
+        }
     }
 
 
@@ -227,8 +234,10 @@ public class ReadOpenWeatherForecast {
             zeit.setTimeInMillis(time.asLong() * 1000);
             //System.out.println(f.format(zeit.toInstant()) + ": " + temp.toString());
             LOGGER.debug("forecast value: " + f.format(zeit.toInstant()) + " = " + temp.toString());
-
-            final Observation o = new Observation(temp.asDouble(), ds);
+            // observations are given in kelvin and are being converted to celsius
+            int k = (int) (temp.asDouble() * 100.0);
+            double c = (k - 27315) / 100.0;
+            final Observation o = new Observation(c, ds);
             o.setPhenomenonTime(ZonedDateTime.parse(f.format(zeit.toInstant())));
             try {
                 service.create(o);
@@ -282,10 +291,8 @@ public class ReadOpenWeatherForecast {
 
         }
         catch (final FileNotFoundException e) {
-            LOGGER.warn("properties file has been created with default values. Please check your correct settings", e);
-            //System.out.println(e);
-            //System.out.println("properties file has been created with default values. Please check your correct settings");
-
+            LOGGER.warn("No properties file found!");
+            
             props.setProperty(KARLSRUHE_CITY_ID, "3214104");
             props.setProperty(PARIS_CITY_ID, "3214104");
             props.setProperty(OPEN_WEATHER_API_APPID, "1e12aa36e7c7c42296496089072ef68a");
@@ -300,6 +307,8 @@ public class ReadOpenWeatherForecast {
             props.setProperty(PROXYPORT, "80");
 
             props.store(new FileOutputStream("config.properties"), "EBITA OpenWeatherData Scanner");
+            LOGGER.warn("New file has been created with default values. Please check your correct settings");
+            LOGGER.warn(props.toString());
             return;
         }
 
