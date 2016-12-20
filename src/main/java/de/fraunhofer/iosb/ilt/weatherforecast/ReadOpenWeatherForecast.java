@@ -71,15 +71,12 @@ public class ReadOpenWeatherForecast {
 
     private static final org.slf4j.Logger LOGGER                 = LoggerFactory.getLogger(ReadOpenWeatherForecast.class);
 
-
     /**
-     * SensorThings structure: <Sensor OpenWeatherData <Datastream City A <Thing
-     * Buidling x <Location buiding x location>>> <Datastream City b <Thing
-     * Buidling y <Location buiding y location>>> > @return @t hrows
-     * ServiceFailureException
      *
+     * @return
+     * @throws ServiceFailureException
      * @throws URISyntaxException
-     * @throws java.io.IOException
+     * @throws IOException
      */
     public Datastream createOpenWeatherSensor() throws ServiceFailureException, URISyntaxException, IOException {
         boolean saveProps = false;
@@ -146,7 +143,7 @@ public class ReadOpenWeatherForecast {
      */
     public Datastream getDataStream(final String cityCode) throws ServiceFailureException, URISyntaxException, IOException {
         // find datastream with given id
-        Datastream ds = null;
+        Datastream ds;
         ds = service.datastreams().find(Long.parseLong(props.getProperty(DATASTREAM_ID)));
         if (ds == null) {
             // if no datastream is found, initialize sensor description
@@ -159,13 +156,13 @@ public class ReadOpenWeatherForecast {
 
     /**
      * Clean all OpenWeatherData related objects within Sensor Server
+     * @throws de.fraunhofer.iosb.ilt.sta.ServiceFailureException
      */
     public void deleteOpenWeatherSensor() throws ServiceFailureException {
-        LOGGER.warn ("Method only deletes data stream. Other entries need to be removed manually if needed");
-        Datastream ds = null;
-        ds = service.datastreams().find(Long.parseLong(props.getProperty(DATASTREAM_ID)));
-        if (ds == null) {
-            service.delete(ds);
+        LOGGER.info ("Removing forecast sensor.");
+        Sensor ows = service.sensors().find(Long.parseLong(props.getProperty(SENSOR_ID)));
+        if (ows == null) {
+            service.delete(ows);
         }
     }
 
