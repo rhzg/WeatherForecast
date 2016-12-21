@@ -1,0 +1,14 @@
+#EBITA OpenWeatherData Scanner
+#Thu Oct 06 10:39:50 CEST 2016
+TEMPERATURE_ID=22
+IOSB_LOCATION_ID=10
+SENSOR_ID=90
+DATASTREAM_ID=93
+KARLSRUHE_CITY_ID=3214104
+THING_IOSB_KA_ID=13
+BASE_URL=http\://ebita.iosb.fraunhofer.de\:80/v1.0/
+PARIS_CITY_ID=3214104
+OPEN_WEATHER_API_APPID=5d0ac5c404f2f288b775ef63ba3fde80
+OPEN_WEATHER_API_URL=http\://api.openweathermap.org/data/2.5/
+proxyhost=proxy-ka.iosb.fraunhofer.de
+proxyport=80
