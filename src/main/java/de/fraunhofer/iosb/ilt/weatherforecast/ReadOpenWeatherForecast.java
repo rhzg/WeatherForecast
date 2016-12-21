@@ -63,6 +63,7 @@ public class ReadOpenWeatherForecast {
     private static final String           DATASTREAM_ID          = "DATASTREAM_ID";
     private static final String           PROXYHOST              = "proxyhost";
     private static final String           PROXYPORT              = "proxyport";
+    private static final String           CLEAN_FORECAST_DATA     = "CLEAN_FORECAST_DATA";
 
     private static final int              MAX_ENTRIES            = 1000;
 
@@ -223,19 +224,20 @@ public class ReadOpenWeatherForecast {
      */
     public void storeForecastData(final Datastream ds, final JsonNode forecast) {
         int count = 0;
+        ZonedDateTime now = ZonedDateTime.now();
         final Calendar zeit = Calendar.getInstance();
         final DateTimeFormatter f = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSSX").withZone(ZoneOffset.UTC);
         for (int i = 0; i < forecast.size(); i++) {
             final JsonNode time = forecast.path(i).path("dt");
             final JsonNode temp = forecast.path(i).path("main").path("temp");
             zeit.setTimeInMillis(time.asLong() * 1000);
-            //System.out.println(f.format(zeit.toInstant()) + ": " + temp.toString());
-            LOGGER.debug("forecast value: " + f.format(zeit.toInstant()) + " = " + temp.toString());
             // observations are given in kelvin and are being converted to celsius
             int k = (int) (temp.asDouble() * 100.0);
             double c = (k - 27315) / 100.0;
+            LOGGER.debug("forecast value: " + f.format(zeit.toInstant()) + " = " + temp.toString() + " Kelvin (" + c + " Celsius)");
             final Observation o = new Observation(c, ds);
             o.setPhenomenonTime(ZonedDateTime.parse(f.format(zeit.toInstant())));
+            o.setResultTime(now);
             try {
                 service.create(o);
                 count++;
@@ -255,19 +257,25 @@ public class ReadOpenWeatherForecast {
      * @throws de.fraunhofer.iosb.ilt.sta.ServiceFailureException
      */
     public void cleanForcastData(final Datastream ds) throws ServiceFailureException {
+        
         int count = 0;
+        boolean more = true;
         EntityList<Observation> observations;
-        observations = ds.observations().query().top(MAX_ENTRIES).list();
-        if (observations != null) {
-            final Iterator<Observation> it = observations.fullIterator();
-            while (it.hasNext()) {
-                final Observation next = it.next();
-                service.delete(next);
-                count++;
+        while (more) {
+            observations = ds.observations().query().top(MAX_ENTRIES).list();
+            if (observations != null) {
+                final Iterator<Observation> it = observations.fullIterator();
+                while (it.hasNext()) {
+                    final Observation next = it.next();
+                    service.delete(next);
+                    count++;
+                }
+                if (observations.getCount() == 0) {
+                    more = false;
+                }
+            } else {
+                throw new ServiceFailureException();
             }
-        }
-        else {
-            throw new ServiceFailureException();
         }
         LOGGER.info("delete old forcast data: " + count + " observations deleted.");
     }
@@ -302,6 +310,8 @@ public class ReadOpenWeatherForecast {
             props.setProperty(DATASTREAM_ID, "359");
             props.setProperty(PROXYHOST, "proxy-ka.iosb.fraunhofer.de");
             props.setProperty(PROXYPORT, "80");
+            props.setProperty(CLEAN_FORECAST_DATA,"true");
+
 
             props.store(new FileOutputStream("config.properties"), "EBITA OpenWeatherData Scanner");
             LOGGER.warn("New file has been created with default values. Please check your correct settings");
@@ -322,7 +332,8 @@ public class ReadOpenWeatherForecast {
         final JsonNode forecast = reader.readForecastData();
 
         // remove existing forecast data
-        reader.cleanForcastData(ds);
+        if (props.getProperty(CLEAN_FORECAST_DATA).equalsIgnoreCase("TRUE"))
+            reader.cleanForcastData(ds);
 
         // convert and store forecast data
         reader.storeForecastData(ds, forecast);
